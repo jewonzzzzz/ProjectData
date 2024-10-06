@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.itwillbs.mapper.SalaryMapper">
+<!-- namespace를 사용해서 mapper 파일을 찾아오는 주소 설정 -->
+
+	<!-- 기본급여정보 가져오기 -->
+	<select id="getSalaryBasicInfo" resultType="SalaryBasicInfoVO">
+		select * 
+		from salary_basic 
+		where sal_basic_id = 1
+	</select>
+
+	<!-- 기본급여정보 초기화 -->
+	<select id="initSalaryBasicInfo">
+		insert into salary_basic(sal_basic_id) 
+		values(1)
+	</select>
+
+	<!-- 기본급여정보 수정 -->
+	<select id="updateSalaryBasicInfo">
+		update salary_basic 
+		set hourwage=#{hourwage}, incometax_rate1=#{incometax_rate1}, incometax_rate2=#{incometax_rate2}, 
+		incometax_rate3=#{incometax_rate3}, incometax_rate4=#{incometax_rate4}, incometax_rate5=#{incometax_rate5}, 
+		incometax_rate6=#{incometax_rate6}, incometax_rate7=#{incometax_rate7}, incometax_rate8=#{incometax_rate8}, 
+		pension_rate=#{pension_rate}, heal_ins_rate=#{heal_ins_rate}, long_ins_rate=#{long_ins_rate}, 
+		emp_ins_rate=#{emp_ins_rate} 
+		where sal_basic_id=1
+	</select>
+
+	<!-- 직급급/직무급 가져오기 -->
+	<select id="getSalaryRankDutyInfo" resultType="SalaryRankDutyVO">
+		select *  
+		from salary_rankduty 
+		where salary_rankduty_id = 1
+	</select>
+
+	<!-- 직급급/직무급 정보 초기화 -->
+	<select id="initSalaryRankDutyInfo">
+		insert into salary_rankduty(salary_rankduty_id) 
+		values(1)
+	</select>
+	
+	<!-- 기본급여정보 수정 -->
+	<select id="updateSalaryRankDutyInfo">
+		update salary_rankduty  
+		set salary_rank_ceo=#{salary_rank_ceo}, salary_rank_vice=#{salary_rank_vice}, salary_rank_director=#{salary_rank_director}, 
+		salary_rank_depart=#{salary_rank_depart}, salary_rank_team=#{salary_rank_team}, salary_rank_manager=#{salary_rank_manager}, 
+		salary_rank_assist=#{salary_rank_assist}, salary_rank_staff=#{salary_rank_staff}, salary_duty1=#{salary_duty1}, 
+		salary_duty2=#{salary_duty2}, salary_duty3=#{salary_duty3}, salary_duty4=#{salary_duty4}, salary_duty5=#{salary_duty5}, 
+		salary_duty6=#{salary_duty6}, salary_duty7=#{salary_duty7}, salary_duty8=#{salary_duty8}, salary_duty9=#{salary_duty9}, 
+		salary_duty10=#{salary_duty10} 
+		where salary_rankduty_id=1
+	</select>
+	
+	
+	<!-- 사번으로 직원정보 가져오기 -->
+	<select id="getMemberInfoForSalary" resultType="MemberInfoForSalaryVO">
+		select * 
+		from member_info 
+		where employee_id = #{employee_id}
+	</select>
+	
+	<!-- 전체 직원정보 가져오기 -->
+	<select id="getMemberAllInfo" resultType="MemberInfoForSalaryVO">
+		select m.employee_id, employee_name, employee_grade, employee_duty, overtime, nighttime, specialtime 
+		from member_info m, tbl_attendance a 
+		where m.employee_id = a.employee_id 
+	</select>
+	
+	<!-- 최근 sal_list_id 가져오기 -->
+	<select id="getSalListId" resultType="String">
+		select sal_list_id 
+		from sal_list 
+		order by sal_list_id desc 
+		limit 1
+	</select>
+		
+		
+		
+</mapper>
