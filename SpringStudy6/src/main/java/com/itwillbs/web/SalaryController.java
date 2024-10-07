@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.itwillbs.domain.CalSalaryFinalVO;
 import com.itwillbs.domain.MemberInfoForSalaryVO;
 import com.itwillbs.domain.SalaryBasicInfoVO;
 import com.itwillbs.domain.SalaryRankDutyVO;
@@ -40,7 +41,7 @@ public class SalaryController {
 	}
 	
 	// 급여기본정보 설정 페이지
-	// http://localhost:8088/salary/salaryCal
+	// http://localhost:8088/salary/salaryBasicInfo
 	@GetMapping(value = "/salaryBasicInfo")
 	public String salaryBasicInfoGet(Model model) {
 		
@@ -150,13 +151,17 @@ public class SalaryController {
 	// 급여산출 페이지 Step3
 	// http://localhost:8088/salary/calSalaryStep3
 	@PostMapping(value = "/calSalaryStep3")
-	public String calSalaryStep3(@RequestParam("employeeIds") List<String> employeeIds ,calSalaryListVO vo, Model model){
+	public String calSalaryStep3(@RequestParam("employeeIds") List<String> employeeIds, calSalaryListVO vo, Model model){
 		logger.debug("calSalaryStep3() 호출");
 		logger.debug(employeeIds.toString());
 		logger.debug(vo.toString());
 		
 		//급여산출 메서드
+		List<CalSalaryFinalVO> CalSalaryFinalInfo = sService.calSalary(employeeIds, vo);
 		
+		logger.debug(CalSalaryFinalInfo.toString());
+		model.addAttribute("CalSalaryFinalInfo", CalSalaryFinalInfo);
+		model.addAttribute("calSalaryInfo", vo);
 		
 		return "/salary/calSalaryStep3";
 	}

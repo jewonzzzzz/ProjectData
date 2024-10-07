@@ -5,7 +5,6 @@ import lombok.Data;
 @Data
 public class CalSalaryFinalVO {
 
-	private String salary_info_id;
 	private String sal_list_id;
 	private String employee_id;
 	private String employee_name;

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
   <head>
@@ -60,7 +61,8 @@
     
   </head>
   <body>
-  	$(employeeInfo)
+  	<%-- ${CalSalaryFinalInfo } --%>
+  	<%-- ${calSalaryInfo } --%>
   
     <div class="wrapper">
     
@@ -192,6 +194,27 @@
                           </tr>
                         </thead>
                         <tbody>
+                        <c:forEach var="list" items="${CalSalaryFinalInfo }">
+                        	<tr>
+								<td>${list.employee_id }</td>                        	
+								<td>${list.employee_name }</td>                        	
+								<td>${list.employee_dept }</td>                        	
+								<td>${list.employee_grade }</td>                        	
+								<td>${list.employee_duty }</td>                        	
+								<td>${list.workType }</td>                        	
+								<td>${list.sal_grade }</td>                        	
+								<td>${list.sal_duty }</td>                        	
+								<td>${list.sal_allow }</td>                        	
+								<td class="salBasic">${list.sal_total_basic }</td>                        	
+								<td>${list.incometax }</td>                        	
+								<td>${list.pension }</td>                        	
+								<td>${list.heal_ins }</td>                        	
+								<td>${list.long_ins }</td>                        	
+								<td>${list.emp_ins }</td>                        	
+								<td class="salDeduct">${list.sal_total_deduct }</td>                        	
+								<td class="salTotal">${list.sal_total }</td>                        	
+                        	</tr>
+                        </c:forEach>
                         </tbody>
                       </table>
                     </div>
@@ -207,7 +230,7 @@
                   </div>
                   
                   <div class="card-body">
-                    <table class="table table-striped mt-3" id="resultTable">
+                    <table class="table table-bordered" id="resultTable">
                       <thead>
                         <tr>
                           <th style='text-align: center;' >급여유형</th>
@@ -219,6 +242,14 @@
                         </tr>
                       </thead>
                       <tbody>
+                      	<tr>
+                      	  <td>${calSalaryInfo.sal_type }</td>
+                      	  <td>${calSalaryInfo.year }</td>
+                      	  <td>${calSalaryInfo.month }</td>
+                      	  <td id="sumSalBasic"></td>
+                      	  <td id="sumSalDeduct"></td>
+                      	  <td id="sumSalTotal"></td>
+                      	</tr>
                       </tbody>
                     </table>
                   </div>
@@ -240,92 +271,26 @@
     <script>
         $(document).ready(function() {
         	
-        	// 전체 선택하기 
-        	$('#checkAllBtn').click(function(){
-        		var checkStatus = $('input[type="checkBox"]').length === $('input[type="checkBox"]:checked').length;
-        		$('input[type="checkBox"]').prop('checked', !checkStatus);
+        	$('table').wrap('<div style="text-align: center;"></div>');
+        	
+        	// 화면로드 시 기본급,공제금,실지급액 합 계산 및 출력
+        	let sumSalBasic = 0;
+        	$('td.salBasic').each(function(){
+        		sumSalBasic += parseInt($(this).text());
         	});
-        	
-        	
-        	// 선택 정보 삭제하기
-        	$('#deleteMemberBtn').click(function() {
-        		var selectedRows = $('input[type="checkBox"]:checked').closest('tr');
-        		
-        		if (selectedRows.length > 0) {
-        			//swal("Success!", "삭제완료", "success");
-       	            swal({
-       	              title: "삭제하시겠습니까?",
-       	              text: "삭제 후에는 직원조회를 통해 다시 업로드 가능합니다.",
-       	              type: "warning",
-       	              buttons: {
-       	                cancel: {
-       	                  visible: true,
-       	                  text: "취소하기",
-       	                  className: "btn btn-danger",
-       	                },
-       	                confirm: {
-       	                  text: "삭제하기",
-       	                  className: "btn btn-success",
-       	                },
-       	              },
-       	            }).then(function(willDelete) {  // 일반 함수 문법으로 변경
-       	             if (willDelete) {
-       	            	selectedRows.each(function() {
-                            $(this).remove(); // 테이블에서 삭제
-                        });
-       	            	swal("Success!", "삭제완료", "success");
-      	          	} 
-       	     	 });
-                } else {
-                    swal("삭제대상 없음", "삭제할 항목이 선택되지 않았습니다.", "info");
-                }
+            $('#sumSalBasic').text(sumSalBasic);
+            
+        	let sumSalDeduct = 0;
+        	$('td.salDeduct').each(function(){
+        		sumSalDeduct += parseInt($(this).text());
         	});
-        	
-            // 전체 직원정보 불러오기
-            $('#selectAllMemberBtn').click(function(){
-            	$.ajax({
-            		url:'/salary/getMemberAllInfo',
-            		type: 'POST',
-            		success: function(response) {
-                        // 성공적으로 데이터를 받아온 경우.
-            			swal("Success!", "전체 직원정보 업로드 완료", "success");
-                        $('#resultTable tbody').empty();
-                        response.forEach(function(data){
-                        	var row = "<tr>" +
-                            "<td style='text-align: center;'><input type='checkBox' name='checkItem' data-id='"+ data.employee_id +"' </td>" +
-                            "<td style='text-align: center;'>" + data.employee_id + "</td>" +
-                            "<td style='text-align: center;'>" + data.employee_name + "</td>" +
-                            "<td style='text-align: center;'>" + data.employee_grade + "</td>" +
-                            "<td style='text-align: center;'>" + data.employee_duty + "</td>" +
-                            "<td style='text-align: center;'>" + data.overtime + "</td>" +
-                            "<td style='text-align: center;'>" + data.nighttime + "</td>" +
-                            "<td style='text-align: center;'>" + data.specialtime + "</td>" +
-                            "</tr>";
-                            $('#resultTable tbody').append(row);
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        // 오류가 발생한 경우
-                        swal("Error!", "직원 정보를 가져오는 데 실패했습니다.", "error");
-                    }
-            	});
-            });
+            $('#sumSalDeduct').text(sumSalDeduct);
             
-            $('#goToStep3').click(function(event){
-            	
-            	event.preventDefault();
-            	$('#dataForm').find('input[name="selectedIds"]').remove();
-            	
-            	const employeeIds = [];
-            	$('input[name="checkBox"]:checked').each(function () {
-            		employeeIds.push($(this).data('id'));
-                });
-            	$('#employeeIds').val(employeeIds);
-            	$('#goToStep3').submit(); 
-            	
-            	
-            });
-            
+        	let sumSalTotal = 0;
+        	$('td.salTotal').each(function(){
+        		sumSalTotal += parseInt($(this).text());
+        	});
+            $('#sumSalTotal').text(sumSalTotal);
             
         });
     </script>

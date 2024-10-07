@@ -67,17 +67,15 @@
 	<select id="getMemberAllInfo" resultType="MemberInfoForSalaryVO">
 		select m.employee_id, employee_name, employee_grade, employee_duty, overtime, nighttime, specialtime 
 		from member_info m, tbl_attendance a 
-		where m.employee_id = a.employee_id 
-	</select>
-	
-	<!-- 최근 sal_list_id 가져오기 -->
-	<select id="getSalListId" resultType="String">
-		select sal_list_id 
-		from sal_list 
-		order by sal_list_id desc 
-		limit 1
+		where m.employee_id = a.employee_id
 	</select>
 		
-		
+	<!-- 사번으로 급여산출에 필요한 직원정보 가져오기 -->
+	<select id="getMemberAllInfoForSalary" resultType="MemberInfoForSalaryVO">
+		select m.employee_id, employee_name, employee_dept, employee_grade, employee_duty, 
+		workType, worktime, overtime, nighttime, specialtime 
+		from member_info m, tbl_attendance a 
+		where m.employee_id = a.employee_id and m.employee_id = #{employee_id} 
+	</select>	
 		
 </mapper>

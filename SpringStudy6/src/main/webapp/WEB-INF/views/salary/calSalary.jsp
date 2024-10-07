@@ -11,7 +11,7 @@
     />
     <link
       rel="icon"
-      href="${pageContext.request.contextPath }/resources/assets/img/kaiadmin/favicon.ico"
+      href="${pageContext.request.contextPath }/resources/assets/img/kaiadmin/favicon.ico?ver=1"
       type="image/x-icon"
     />
 
@@ -34,14 +34,14 @@
         },
       });
     </script>
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js?ver=1.0"></script>
     <!-- CSS Files -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/assets/css/plugins.min.css" />
-    <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/assets/css/kaiadmin.min.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/assets/css/bootstrap.min.css?ver=1.0" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/assets/css/plugins.min.css?ver=1.0" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/assets/css/kaiadmin.min.css?ver=1.0" />
 
     <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/assets/css/demo.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/assets/css/demo.css?ver=1.0" />
   </head>
   <body>
   
@@ -139,41 +139,41 @@
     
     
     <!--   Core JS Files   -->
-    <script src="${pageContext.request.contextPath }/resources/assets/js/core/jquery-3.7.1.min.js"></script>
-    <script src="${pageContext.request.contextPath }/resources/assets/js/core/popper.min.js"></script>
-    <script src="${pageContext.request.contextPath }/resources/assets/js/core/bootstrap.min.js"></script>
+    <script src="${pageContext.request.contextPath }/resources/assets/js/core/jquery-3.7.1.min.js?ver=1.0"></script>
+    <script src="${pageContext.request.contextPath }/resources/assets/js/core/popper.min.js?ver=1.0"></script>
+    <script src="${pageContext.request.contextPath }/resources/assets/js/core/bootstrap.min.js?ver=1.0"></script>
 
     <!-- jQuery Scrollbar -->
-    <script src="${pageContext.request.contextPath }/resources/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="${pageContext.request.contextPath }/resources/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js?ver=1.0"></script>
 
     <!-- Chart JS -->
-    <script src="${pageContext.request.contextPath }/resources/assets/js/plugin/chart.js/chart.min.js"></script>
+    <script src="${pageContext.request.contextPath }/resources/assets/js/plugin/chart.js/chart.min.js?ver=1.0"></script>
 
     <!-- jQuery Sparkline -->
-    <script src="${pageContext.request.contextPath }/resources/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
+    <script src="${pageContext.request.contextPath }/resources/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js?ver=1.0"></script>
 
     <!-- Chart Circle -->
-    <script src="${pageContext.request.contextPath }/resources/assets/js/plugin/chart-circle/circles.min.js"></script>
+    <script src="${pageContext.request.contextPath }/resources/assets/js/plugin/chart-circle/circles.min.js?ver=1.0"></script>
 
     <!-- Datatables -->
-    <script src="${pageContext.request.contextPath }/resources/assets/js/plugin/datatables/datatables.min.js"></script>
+    <script src="${pageContext.request.contextPath }/resources/assets/js/plugin/datatables/datatables.min.js?ver=1.0"></script>
 
     <!-- Bootstrap Notify -->
-    <script src="${pageContext.request.contextPath }/resources/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script>
+    <script src="${pageContext.request.contextPath }/resources/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js?ver=1.0"></script>
 
     <!-- jQuery Vector Maps -->
-    <script src="${pageContext.request.contextPath }/resources/assets/js/plugin/jsvectormap/jsvectormap.min.js"></script>
-    <script src="${pageContext.request.contextPath }/resources/assets/js/plugin/jsvectormap/world.js"></script>
+    <script src="${pageContext.request.contextPath }/resources/assets/js/plugin/jsvectormap/jsvectormap.min.js?ver=1.0"></script>
+    <script src="${pageContext.request.contextPath }/resources/assets/js/plugin/jsvectormap/world.js?ver=1.0"></script>
 
     <!-- Sweet Alert -->
-    <script src="${pageContext.request.contextPath }/resources/assets/js/plugin/sweetalert/sweetalert.min.js"></script>
+    <script src="${pageContext.request.contextPath }/resources/assets/js/plugin/sweetalert/sweetalert.min.js?ver=1.0"></script>
 
     <!-- Kaiadmin JS -->
-    <script src="${pageContext.request.contextPath }/resources/assets/js/kaiadmin.min.js"></script>
+    <script src="${pageContext.request.contextPath }/resources/assets/js/kaiadmin.min.js?ver=1.0"></script>
 
     <!-- Kaiadmin DEMO methods, don't include it in your project! -->
-    <script src="${pageContext.request.contextPath }/resources/assets/js/setting-demo.js"></script>
-    <script src="${pageContext.request.contextPath }/resources/assets/js/demo.js"></script>
+    <script src="${pageContext.request.contextPath }/resources/assets/js/setting-demo.js?ver=1.0"></script>
+    <script src="${pageContext.request.contextPath }/resources/assets/js/demo.js?ver=1.0"></script>
 
   </body>
 </html>

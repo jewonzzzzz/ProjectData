@@ -164,8 +164,78 @@
                           <button type="button" id="deleteMemberBtn" class="btn btn-primary">
                             삭제하기
                           </button>
+	                          <button
+		                        class="btn btn-primary"
+		                        data-bs-toggle="modal"
+		                        data-bs-target="#addRowModal"
+		                      >
+		                        직원조회
+	                      </button>
                         </div>
                       </div>
+                      
+                     <div
+                      class="modal fade"
+                      id="addRowModal"
+                      tabindex="-1"
+                      role="dialog"
+                      aria-hidden="true"
+                    >
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header border-0">
+                            <h5 class="modal-title">
+                              <span class="fw-bold"> 직원 조회</span>
+                            </h5>
+                            <button
+                              type="button"
+                              class="close"
+                              data-bs-dismiss="modal"
+                              aria-label="Close"
+                            >
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <p class="lead">
+                              사원번호 또는 이름을 입력하세요.
+                            </p>
+                            <form>
+                              <div class="row">
+                                <div class="col-sm-12">
+                                <div class="card-body">
+                                  <div class="form-group form-group-default">
+                                    <label>사번/이름</label>
+                                    <input
+                                      id="addName"
+                                      type="text"
+                                      class="form-control"
+                                      placeholder="사번/이름을 입력하세요"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+                          <div class="modal-footer border-0">
+                            <button
+                              type="button"
+                              id="addRowButton"
+                              class="btn btn-primary"
+                            >
+                              조회하기
+                            </button>
+                            <button
+                              type="button"
+                              class="btn btn-danger"
+                              data-bs-dismiss="modal"
+                            >
+                              취소하기
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   
                   <div class="card-body">
                     <table class="table table-striped mt-3" id="resultTable">
@@ -292,6 +362,25 @@
             	$('#dataForm').submit(); 
             });
             
+         	// 모달반응
+            $("#add-row").DataTable({
+              pageLength: 5,
+            });
+
+            var action =
+              '<td> <div class="form-button-action"> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
+
+            $("#addRowButton").click(function () {
+              $("#add-row")
+                .dataTable()
+                .fnAddData([
+                  $("#addName").val(),
+                  $("#addPosition").val(),
+                  $("#addOffice").val(),
+                  action,
+                ]);
+              $("#addRowModal").modal("hide");
+            });
             
         });
     </script>
