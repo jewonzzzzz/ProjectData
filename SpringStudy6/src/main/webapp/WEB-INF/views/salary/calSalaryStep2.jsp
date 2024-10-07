@@ -145,9 +145,7 @@
               </div>
             
             
-              <div class="col-md-10">
                 <div class="col-md-12">
-                
                 <div class="card">
                   <div class="card-header">
                     <div class="card-title">직원정보 조회</div>
@@ -174,69 +172,7 @@
                         </div>
                       </div>
                       
-                     <div
-                      class="modal fade"
-                      id="addRowModal"
-                      tabindex="-1"
-                      role="dialog"
-                      aria-hidden="true"
-                    >
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header border-0">
-                            <h5 class="modal-title">
-                              <span class="fw-bold"> 직원 조회</span>
-                            </h5>
-                            <button
-                              type="button"
-                              class="close"
-                              data-bs-dismiss="modal"
-                              aria-label="Close"
-                            >
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <div class="modal-body">
-                            <p class="lead">
-                              사원번호 또는 이름을 입력하세요.
-                            </p>
-                            <form>
-                              <div class="row">
-                                <div class="col-sm-12">
-                                <div class="card-body">
-                                  <div class="form-group form-group-default">
-                                    <label>사번/이름</label>
-                                    <input
-                                      id="addName"
-                                      type="text"
-                                      class="form-control"
-                                      placeholder="사번/이름을 입력하세요"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </form>
-                          </div>
-                          <div class="modal-footer border-0">
-                            <button
-                              type="button"
-                              id="addRowButton"
-                              class="btn btn-primary"
-                            >
-                              조회하기
-                            </button>
-                            <button
-                              type="button"
-                              class="btn btn-danger"
-                              data-bs-dismiss="modal"
-                            >
-                              취소하기
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  
+                     
                   <div class="card-body">
                     <table class="table table-striped mt-3" id="resultTable">
                       <thead>
@@ -263,13 +199,94 @@
                           다음으로
                     </button>
 	            	</form>
-                    
                   </div>
                 </div>
-              </div>
-              </div>
+                </div>
             </div>
             </div>
+            <div
+                      class="modal fade"
+                      id="addRowModal"
+                      tabindex="-1"
+                      role="dialog"
+                      aria-hidden="true"
+                    >
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header border-0">
+                            <h5 class="modal-title">
+                              <span class="fw-bold"> 직원 조회</span>
+                            </h5>
+                            <button
+                              type="button"
+                              class="close"
+                              data-bs-dismiss="modal"
+                              aria-label="Close"
+                            >
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                          <table class="table table-striped mt-3" id="modalTable" style="display: none;">
+                      <thead>
+                        <tr>
+                          <th>선택</th>
+                          <th>사번</th>
+                          <th>이름</th>
+                          <th>직급</th>
+                          <th>부서</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                          
+                          
+                          
+                          
+                          
+                          
+                          <div id="modalContent">
+                            <p class="lead">
+                              사원번호 또는 이름을 입력하세요.
+                            </p>
+                              <div class="row">
+                                <div class="col-sm-12">
+                                <div class="card-body">
+                                  <div class="form-group form-group-default">
+                                    <label>사번/이름</label>
+                                    <input
+                                      id="addName"
+                                      type="text"
+                                      class="form-control"
+                                      placeholder="사번/이름을 입력하세요"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            
+                          </div>
+                          <div class="modal-footer border-0">
+                            <button
+                              type="button"
+                              id="selectBtn"
+                              class="btn btn-primary"
+                            >
+                              조회하기
+                            </button>
+                            <button
+                              type="button"
+                              class="btn btn-danger"
+                              data-bs-dismiss="modal"
+                            >
+                              취소하기
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
            </div>
            <%@ include file="/resources/assets/inc/footer.jsp" %>
           </div>
@@ -363,23 +380,12 @@
             });
             
          	// 모달반응
-            $("#add-row").DataTable({
-              pageLength: 5,
-            });
-
-            var action =
-              '<td> <div class="form-button-action"> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-bs-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
-
-            $("#addRowButton").click(function () {
-              $("#add-row")
-                .dataTable()
-                .fnAddData([
-                  $("#addName").val(),
-                  $("#addPosition").val(),
-                  $("#addOffice").val(),
-                  action,
-                ]);
-              $("#addRowModal").modal("hide");
+            
+            $("#selectBtn").click(function () {
+            	$('#modalContent').hide();     
+            	$('#modalTable').show();            	
+            	
+              
             });
             
         });
