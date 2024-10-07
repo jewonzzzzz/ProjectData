@@ -64,6 +64,17 @@ public class SalaryDAOImpl implements SalaryDAO {
 	}
 
 	@Override
+	public List<MemberInfoForSalaryVO> getMemberInfoToId(String employee_id) {
+		return sqlSession.selectList(NAMESPACE + ".getMemberInfoForSalary", employee_id);
+	}
+	
+	@Override
+	public List<MemberInfoForSalaryVO> getMemberInfoToName(String employee_name) {
+		return sqlSession.selectList(NAMESPACE + ".getMemberInfoToName", employee_name);
+	}
+	
+	
+	@Override
 	public List<CalSalaryFinalVO> calSalary(List<String> employeeIds, calSalaryListVO vo) {
 
 		// 급여 기본정보 가져오기
@@ -301,10 +312,5 @@ class SalaryCalculrator {
 					(sal_total_basic - 1000000000/12)*basciInfo.getIncometax_rate8());
 		}
 	}
-	
-	
-	
-	
-	
 
 }

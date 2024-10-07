@@ -164,6 +164,7 @@
                           </button>
 	                          <button
 		                        class="btn btn-primary"
+		                        id = "modalOpenBtn"
 		                        data-bs-toggle="modal"
 		                        data-bs-target="#addRowModal"
 		                      >
@@ -204,6 +205,8 @@
                 </div>
             </div>
             </div>
+            
+            <!-- 모달 -->
             <div
                       class="modal fade"
                       id="addRowModal"
@@ -220,6 +223,7 @@
                             <button
                               type="button"
                               class="close"
+                              id="modalOpenBtn"
                               data-bs-dismiss="modal"
                               aria-label="Close"
                             >
@@ -227,24 +231,39 @@
                             </button>
                           </div>
                           <div class="modal-body">
-                          <table class="table table-striped mt-3" id="modalTable" style="display: none;">
-                      <thead>
-                        <tr>
-                          <th>선택</th>
-                          <th>사번</th>
-                          <th>이름</th>
-                          <th>직급</th>
-                          <th>부서</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      </tbody>
-                    </table>
-                          
-                          
-                          
-                          
-                          
+	                          <div id="modalNextContent">
+		                          <table class="table table-striped mt-3" id="modalTable">
+				                      <thead>
+				                        <tr>
+				                          <th>선택</th>
+				                          <th>사번</th>
+				                          <th>이름</th>
+				                          <th>직급</th>
+				                          <th>부서</th>
+				                        </tr>
+				                      </thead>
+				                      <tbody>
+				                      </tbody>
+			                      </table>
+			                      <div class="modal-footer border-0">
+	                            <button
+	                              type="button"
+	                              id="regBtn"
+	                              class="btn btn-primary"
+	                            >
+	                              등록하기
+	                            </button>
+	                            <button
+	                              type="button"
+	                              class="btn btn-danger"
+	                              data-bs-dismiss="modal"
+	                            >
+	                              취소하기
+	                            </button>
+                          </div>
+			                      
+			                      
+		                      </div>
                           
                           <div id="modalContent">
                             <p class="lead">
@@ -256,19 +275,17 @@
                                   <div class="form-group form-group-default">
                                     <label>사번/이름</label>
                                     <input
-                                      id="addName"
+                                      id="modalInputText"
                                       type="text"
                                       class="form-control"
                                       placeholder="사번/이름을 입력하세요"
+                                      name="employeeInfo"
                                     />
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            
-                            
-                          </div>
-                          <div class="modal-footer border-0">
+                            <div class="modal-footer border-0">
                             <button
                               type="button"
                               id="selectBtn"
@@ -284,6 +301,8 @@
                               취소하기
                             </button>
                           </div>
+                          </div>
+                          
                         </div>
                       </div>
                     </div>
@@ -300,7 +319,6 @@
         		var checkStatus = $('input[type="checkBox"]').length === $('input[type="checkBox"]:checked').length;
         		$('input[type="checkBox"]').prop('checked', !checkStatus);
         	});
-        	
         	
         	// 선택 정보 삭제하기
         	$('#deleteMemberBtn').click(function() {
@@ -380,14 +398,52 @@
             });
             
          	// 모달반응
-            
+         	$('#modalOpenBtn').click(function(){
+         		$('#modalInputText').val('');
+         		$('#modalContent').show();     
+            	$('#modalNextContent').hide();    
+         	});
+         	
             $("#selectBtn").click(function () {
-            	$('#modalContent').hide();     
-            	$('#modalTable').show();            	
-            	
-              
+            	$.ajax({
+            		url:'/salary/getMemberInfoForModal',
+            		type: 'POST',
+            		data: $('#modalInputText').val(),
+            		contentType: 'application/json',
+            		success: function(response) {
+                        // 성공적으로 데이터를 받아온 경우.
+            			// swal("Success!", "ajax성공" + response, "success");
+                        $('#modalTable tbody').empty();
+                        response.forEach(function(data){
+                        	var row = "<tr>" +
+                            "<td><input class='check-Item' type='radio' name='checkGroup' data-id='"+ data.employee_id +"' </td>" +
+                            "<td>" + data.employee_id + "</td>" +
+                            "<td>" + data.employee_name + "</td>" +
+                            "<td>" + data.employee_grade + "</td>" +
+                            "<td>" + data.employee_dept + "</td>" +
+                            "</tr>";
+                            $('#modalTable tbody').append(row);
+                        });
+                        $('#modalNextContent').show();
+                        $('#modalContent').hide();
+                    },
+                    error: function(xhr, status, error) {
+                        // 오류가 발생한 경우
+                        $('#modalContent').show();
+                        swal("Error!", "사번 또는 이름을 입력해주세요", "error");
+                    }
+            	});
             });
             
+            // 모달테이블에서 선택된 직원정보 본 테이블로 옮기기
+            $('#regBtn').click(function(){
+//             	$.ajax({
+//             		url:'/salary/transModalToTable',
+//             		type: 'POST',
+//             		data: $('.check-item:checked').data('id'),
+//             		contentType: 'application/json',
+//             	});
+            });
         });
     </script>
     

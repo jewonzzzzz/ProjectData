@@ -63,4 +63,14 @@ public class SalaryServiceImpl implements SalaryService {
 		return sdao.calSalary(employeeIds, vo);
 	}
 	
+	@Override
+	public List<MemberInfoForSalaryVO> getMemberInfoToId(String employee_id) {
+		return sdao.getMemberInfoToId(employee_id);
+	}
+	
+	@Override
+	public List<MemberInfoForSalaryVO> getMemberInfoToName(String employee_name) {
+		return sdao.getMemberInfoToName(employee_name);
+	}
+	
 }

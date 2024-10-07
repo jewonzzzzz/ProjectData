@@ -140,6 +140,25 @@ public class SalaryController {
 		return sService.getMemberInfoForSalary(employee_id);
 	}
 	
+	// 조회 시 직원정보 가져오기(모달테이블 추가)
+	// http://localhost:8088/salary/getMemberInfoForSalary
+	@PostMapping(value = "/getMemberInfoForModal")
+	@ResponseBody
+	public List<MemberInfoForSalaryVO> getMemberInfoForModal(@RequestBody String employeeInfo){
+	logger.debug("employeeInfo:" + employeeInfo);
+	
+	//사번으로 먼저 select
+	List<MemberInfoForSalaryVO> memberInfoList = sService.getMemberInfoToId(employeeInfo);
+	
+	//사번으로 검색 없으면
+	if(memberInfoList.size() == 0) {
+		memberInfoList = sService.getMemberInfoToName(employeeInfo);
+	}
+	logger.debug(memberInfoList.toString());
+	
+		return memberInfoList;
+	}
+	
 	// 급여산출 관련 전체직원정보 가져오기
 	// http://localhost:8088/salary/getMemberAllInfo
 	@PostMapping(value = "/getMemberAllInfo")

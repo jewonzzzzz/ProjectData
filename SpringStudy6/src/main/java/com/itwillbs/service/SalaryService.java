@@ -37,5 +37,10 @@ public interface SalaryService {
 	// 급여산출하기
 	public List<CalSalaryFinalVO> calSalary(List<String> employeeIds, calSalaryListVO vo);
 	
+	// 사번으로 직원정보 가져오기
+	public List<MemberInfoForSalaryVO> getMemberInfoToId(String employee_id);
+	
+	// 이름으로 직원정보 가져오기
+	public List<MemberInfoForSalaryVO> getMemberInfoToName(String employee_name);
 	
 }
