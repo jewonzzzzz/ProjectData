@@ -61,9 +61,8 @@
     
   </head>
   <body>
-  	<%-- ${CalSalaryFinalInfo } --%>
-  	<%-- ${calSalaryInfo } --%>
-  
+  	<%-- ${calSalaryFinalInfo } --%>
+  	<%-- ${calSalaryListInfo } --%>
     <div class="wrapper">
     
       <%@ include file="/resources/assets/inc/sidebar.jsp" %>
@@ -190,9 +189,9 @@
                       </thead>
                       <tbody>
                       	<tr>
-                      	  <td>${calSalaryInfo.sal_type }</td>
-                      	  <td>${calSalaryInfo.year }</td>
-                      	  <td>${calSalaryInfo.month }</td>
+                      	  <td>${calSalaryListInfo.sal_type }</td>
+                      	  <td>${calSalaryListInfo.year }</td>
+                      	  <td>${calSalaryListInfo.month }</td>
                       	  <td id="sumMember"></td>
                       	  <td id="sumSalBasic"></td>
                       	  <td id="sumSalDeduct"></td>
@@ -210,7 +209,7 @@
                     <div class="card-title">급여산출 상세내역</div>
                   </div>
                   <div class="card-body">
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
                       <table class="table table-bordered" id="calSalaryTable">
                         <thead>
                           <tr>
@@ -234,7 +233,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                        <c:forEach var="list" items="${CalSalaryFinalInfo }">
+                        <c:forEach var="list" items="${calSalaryFinalInfo }">
                         	<tr>
 								<td class="employee_id">${list.employee_id }</td>                        	
 								<td>${list.employee_name }</td>                        	
@@ -262,9 +261,6 @@
                 </div>
                 </div>
             </div>
-            <input type="hidden"  name="sal_type" value="${calSalaryInfo.sal_type }">
-            <input type="hidden"  name="year" value="${calSalaryInfo.year }">
-            <input type="hidden"  name="month" value="${calSalaryInfo.month }">
             </div>
            </div>
            <%@ include file="/resources/assets/inc/footer.jsp" %>
@@ -273,43 +269,8 @@
             
     <script>
         $(document).ready(function() {
-        	
-        	//저장버튼 시 테이블에 저장
-        	$('#saveBtn').click(function(){
-        		// 가져올 데이터 : 사번리스트, 급여형태, 연도, 월
-        		
-        		 var employeeIds = $('#calSalaryTable .employee_id').map(function() {
-		         return $(this).text().trim();  // 각 `<td>`의 텍스트 값을 가져와서 배열에 추가
-			  	 }).get();
-		        
-		     	// 데이터 객체 구성
-		        var dataToSend = {
-	        		employeeIds: employeeIds,
-	        		sal_type: $('input[name="sal_type"]').val(),
-		            year: $('input[name="year"]').val(),
-		            month: $('input[name="month"]').val()
-		        };
-        		
-        		$.ajax({
-        			url:'/salary/saveSalaryInfo',
-            		type: 'POST',
-            		data: JSON.stringify(dataToSend),
-            		contentType: 'application/json',
-            		success: function(response) {
-            			swal("Warning!", "성공", "warning");
-            		},
-            		error: function(xhr, status, error) {
-                        swal("Error!", "실패", "error");
-                    }
-        		});
-        		
-        	});
-        	
-        	
-        	
-        	
-        	
-        	
+     		
+        	// 테이블 가운대 정렬
         	$('table').wrap('<div style="text-align: center;"></div>');
         	
         	// 화면로드 시 기본급,공제금,실지급액 합 계산 및 출력

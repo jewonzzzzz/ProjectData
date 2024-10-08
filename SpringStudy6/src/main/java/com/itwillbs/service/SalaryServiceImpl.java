@@ -73,4 +73,30 @@ public class SalaryServiceImpl implements SalaryService {
 		return sdao.getMemberInfoToName(employee_name);
 	}
 	
+	@Override
+	public void saveCalSalary(List<CalSalaryFinalVO> calSalaryData) {
+		sdao.saveCalSalary(calSalaryData);
+	}
+	
+	@Override
+	public void saveCalSalaryList(calSalaryListVO vo) {
+		sdao.saveCalSalaryList(vo);
+	}
+	
+	@Override
+	public List<calSalaryListVO> getCalSalaryList() {
+		return sdao.getCalSalaryList();
+	}
+	
+	@Override
+	public List<CalSalaryFinalVO> getCalSalaryFinalList(String sal_list_id) {
+		return sdao.getCalSalaryFinalList(sal_list_id);
+	}
+	
+	// 급여내역테이블 조회시 급여정보(형태/연/월) 가져오기
+	@Override
+	public calSalaryListVO getCalSalaryListForView(String sal_list_id) {
+		return sdao.getCalSalaryListForView(sal_list_id);
+	}
+	
 }

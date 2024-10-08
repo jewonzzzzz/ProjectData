@@ -58,9 +58,10 @@
 	
 	<!-- 사번으로 직원정보 가져오기 -->
 	<select id="getMemberInfoForSalary" resultType="MemberInfoForSalaryVO">
-		select * 
-		from member_info 
-		where employee_id = #{employee_id}
+		select m.employee_id, employee_name, employee_dept, employee_grade, employee_duty, 
+		workType, worktime, overtime, nighttime, specialtime 
+		from member_info m, tbl_attendance a 
+		where m.employee_id = a.employee_id and m.employee_id = #{employee_id} 
 	</select>
 		
 	<!-- 이름으로 직원정보 가져오기 -->
@@ -84,5 +85,37 @@
 		from member_info m, tbl_attendance a 
 		where m.employee_id = a.employee_id and m.employee_id = #{employee_id} 
 	</select>	
+	
+	<!-- 급여산출정보를 테이블에 저장하기 -->
+	<select id="saveCalSalary">
+		insert into salary_final(sal_list_id, employee_id, employee_name, employee_dept, 
+		employee_grade, employee_duty, workType, sal_grade, sal_duty, sal_allow, sal_total_basic, 
+		incometax, pension, heal_ins, long_ins, emp_ins, sal_total_deduct, sal_total) 
+		values(#{sal_list_id}, #{employee_id}, #{employee_name}, #{employee_dept}, 
+		#{employee_grade}, #{employee_duty}, #{workType}, #{sal_grade}, #{sal_duty}, #{sal_allow}, 
+		#{sal_total_basic}, #{incometax}, #{pension}, #{heal_ins}, #{long_ins}, #{emp_ins}, 
+		#{sal_total_deduct}, #{sal_total} )
+	</select>	
+	
+	<select id="saveCalSalaryList">
+		insert into sal_list(sal_list_id, year, month, sal_type, sal_list_subject, sal_list_date, 
+		sal_list_status) values(#{sal_list_id}, #{year}, #{month}, #{sal_type}, #{sal_list_subject}, 
+		now(), '임시저장')
+	</select>	
+	
+	<select id="getCalSalaryList" resultType="calSalaryListVO">
+		select * from sal_list order by sal_list_id desc 
+	</select>	
+	
+	<!-- 급여내역리스트에서 조회시 급여상세내역 조회 -->
+	<select id="getCalSalaryFinalListForView" resultType="CalSalaryFinalVO">
+		select * from salary_final where sal_list_id = #{sal_list_id} 
+	</select>	
+	
+	<!-- 급여내역리스트에서 조회시 급여정보(형태/연/월) 조회 -->
+	<select id="getCalSalaryListForView" resultType="calSalaryListVO">
+		select year, month, sal_type from sal_list where sal_list_id = #{sal_list_id} 
+	</select>	
+	
 		
 </mapper>

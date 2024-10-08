@@ -144,8 +144,7 @@
                 </div>
               </div>
             
-            
-                <div class="col-md-12">
+                <div class="col-md-10">
                 <div class="card">
                   <div class="card-header">
                     <div class="card-title">직원정보 조회</div>
@@ -153,8 +152,16 @@
                   
                   <div class="form-group from-show-notify row">
                         <div class="col-lg-12 col-md-12 col-sm-12">
+                          <button
+	                        class="btn btn-primary"
+	                        id = "modalOpenBtn"
+	                        data-bs-toggle="modal"
+	                        data-bs-target="#addRowModal"
+	                      	>
+		                        직원조회
+	                      </button>
                           <button type="button" id="selectAllMemberBtn" class="btn btn-primary">
-                            전체 직원조회
+                            전직원 불러오기
                           </button>
                           <button type="button" id="checkAllBtn" class="btn btn-primary">
                             전체선택
@@ -162,17 +169,17 @@
                           <button type="button" id="deleteMemberBtn" class="btn btn-primary">
                             삭제하기
                           </button>
-	                          <button
-		                        class="btn btn-primary"
-		                        id = "modalOpenBtn"
-		                        data-bs-toggle="modal"
-		                        data-bs-target="#addRowModal"
-		                      >
-		                        직원조회
-	                      </button>
+	                      <form id="dataForm" action="/salary/calSalaryStep3" method="post" style="display:inline-block;">
+			            	<input type="hidden" name="sal_type" value="${calSalaryInfo.sal_type }">
+			            	<input type="hidden" name="year" value="${calSalaryInfo.year }">
+			            	<input type="hidden" name="month" value="${calSalaryInfo.month }">
+			            	<input type="hidden" id="employeeIds" name="employeeIds">
+				            <button type="submit" id="submitBtn" class="btn btn-primary">
+		                          다음으로
+		                    </button>
+		            	</form>
                         </div>
                       </div>
-                      
                      
                   <div class="card-body">
                     <table class="table table-striped mt-3" id="resultTable">
@@ -191,15 +198,6 @@
                       <tbody>
                       </tbody>
                     </table>
-                   	<form id="dataForm" action="/salary/calSalaryStep3" method="post">
-		            	<input type="hidden" name="sal_type" value="${calSalaryInfo.sal_type }">
-		            	<input type="hidden" name="year" value="${calSalaryInfo.year }">
-		            	<input type="hidden" name="month" value="${calSalaryInfo.month }">
-		            	<input type="hidden" id="employeeIds" name="employeeIds">
-		            <button type="submit" id="submitBtn" class="btn btn-primary">
-                          다음으로
-                    </button>
-	            	</form>
                   </div>
                 </div>
                 </div>
@@ -316,13 +314,13 @@
         	
         	// 전체 선택하기 
         	$('#checkAllBtn').click(function(){
-        		var checkStatus = $('input[type="checkBox"]').length === $('input[type="checkBox"]:checked').length;
-        		$('input[type="checkBox"]').prop('checked', !checkStatus);
+        		var checkStatus = $('input[type="checkbox"]').length === $('input[type="checkbox"]:checked').length;
+        		$('input[type="checkbox"]').prop('checked', !checkStatus);
         	});
         	
         	// 선택 정보 삭제하기
         	$('#deleteMemberBtn').click(function() {
-        		var selectedRows = $('input[type="checkBox"]:checked').closest('tr');
+        		var selectedRows = $('input[type="checkbox"]:checked').closest('tr');
         		
         		if (selectedRows.length > 0) {
         			//swal("Success!", "삭제완료", "success");
@@ -365,7 +363,7 @@
                         $('#resultTable tbody').empty();
                         response.forEach(function(data){
                         	var row = "<tr>" +
-                            "<td style='text-align: center;'><input class='checkItem' type='checkBox' name='checkItem' data-id='"+ data.employee_id +"' </td>" +
+                            "<td style='text-align: center;'><input class='checkItem' type='checkbox' name='checkItem' data-id='"+ data.employee_id +"' </td>" +
                             "<td style='text-align: center;'>" + data.employee_id + "</td>" +
                             "<td style='text-align: center;'>" + data.employee_name + "</td>" +
                             "<td style='text-align: center;'>" + data.employee_grade + "</td>" +
@@ -387,7 +385,6 @@
             // 다음으로 버튼 시 사번가지고 이동하기
             $('#submitBtn').click(function(event){
             	event.preventDefault();
-            	//$('#submitBtn').find('input[name="selectedIds"]').remove();
             	const employeeIds = [];
             	$('.checkItem:checked').each(function () {
             		employeeIds.push($(this).data('id'));
@@ -408,7 +405,6 @@
             	$.ajax({
             		url:'/salary/getMemberInfoForModal',
             		type: 'POST',
-            		data: $('#modalInputText').val(),
             		contentType: 'application/json',
             		success: function(response) {
                         // 성공적으로 데이터를 받아온 경우.
@@ -416,7 +412,7 @@
                         $('#modalTable tbody').empty();
                         response.forEach(function(data){
                         	var row = "<tr>" +
-                            "<td><input class='check-Item' type='radio' name='checkGroup' data-id='"+ data.employee_id +"' </td>" +
+                            "<td><input class='check-radio' type='radio' name='checkGroup' data-id='"+ data.employee_id +"' </td>" +
                             "<td>" + data.employee_id + "</td>" +
                             "<td>" + data.employee_name + "</td>" +
                             "<td>" + data.employee_grade + "</td>" +
@@ -437,13 +433,49 @@
             
             // 모달테이블에서 선택된 직원정보 본 테이블로 옮기기
             $('#regBtn').click(function(){
-//             	$.ajax({
-//             		url:'/salary/transModalToTable',
-//             		type: 'POST',
-//             		data: $('.check-item:checked').data('id'),
-//             		contentType: 'application/json',
-//             	});
+            	$.ajax({
+            		url:'/salary/transModalToTable',
+            		type: 'POST',
+            		data: JSON.stringify($('input[type="radio"]:checked').data('id')),
+            		contentType: 'application/json',
+            		success: function(response) {
+            			
+            			var checkedDataId = $('input[type="radio"]:checked').data('id');
+            			console.log("Checked ID: " + checkedDataId);
+            			var existingIds = [];
+            		    $('#resultTable input[type="checkbox"]').each(function() {
+            		        existingIds.push($(this).data('id'));  // 각 체크박스의 id 값을 배열에 추가
+            		    });
+            		    console.log("existingIds: " + checkedDataId);
+            		    if (existingIds.includes(checkedDataId)) {
+            		        swal("Warning!", "이미 등록된 정보가 있습니다.", "warning");
+            		    } else {
+            		    	swal("Success!", "정상적으로 등록하였습니다", "success");
+                			response.forEach(function(data){
+                            	var row = "<tr>" +
+                                "<td style='text-align: center;'><input class='checkItem' type='checkbox' name='checkItem' data-id='"+ data.employee_id +"' </td>" +
+                                "<td style='text-align: center;'>" + data.employee_id + "</td>" +
+                                "<td style='text-align: center;'>" + data.employee_name + "</td>" +
+                                "<td style='text-align: center;'>" + data.employee_grade + "</td>" +
+                                "<td style='text-align: center;'>" + data.employee_duty + "</td>" +
+                                "<td style='text-align: center;'>" + data.overtime + "</td>" +
+                                "<td style='text-align: center;'>" + data.nighttime + "</td>" +
+                                "<td style='text-align: center;'>" + data.specialtime + "</td>" +
+                                "</tr>";
+                                $('#resultTable tbody').append(row);
+                            });
+            		    }
+            		},
+            		error: function(xhr, status, error) {
+                        swal("Error!", "정보를 가져오는데 실패하였습니다.", "error");
+                    }
+            	});
             });
+            
+            // 이미 등록된 사원 중복등록 막기
+            
+            
+            
         });
     </script>
     

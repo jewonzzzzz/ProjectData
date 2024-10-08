@@ -28,7 +28,7 @@ public interface SalaryService {
 	// 직급급/직무급 수정
 	public void updatesalaryRankDutyInfo(SalaryRankDutyVO vo);
 	
-	// 급여산출용 직원정보 가져오기
+	// 사번으로 급여산출용 직원정보 가져오기
 	public List<MemberInfoForSalaryVO> getMemberInfoForSalary(String employee_id);
 	
 	// 급여산출용 전체 직원정보 가져오기
@@ -42,5 +42,24 @@ public interface SalaryService {
 	
 	// 이름으로 직원정보 가져오기
 	public List<MemberInfoForSalaryVO> getMemberInfoToName(String employee_name);
+	
+	// 급여산출결과 급여상세 테이블에 저장
+	public void saveCalSalary(List<CalSalaryFinalVO> calSalaryData);
+	
+	// 급여산출결과 급여내역 테이블에 저장
+	public void saveCalSalaryList(calSalaryListVO vo);
+	
+	// 급여내역테이블에서 급여리스트 가져오기
+	public List<calSalaryListVO> getCalSalaryList();
+	
+	// 급여내역테이블 조회시 급여상세내역 가져오기
+	public List<CalSalaryFinalVO> getCalSalaryFinalList(String sal_list_id);
+	
+	// 급여내역테이블 조회시 급여정보(형태/연/월) 가져오기
+	public calSalaryListVO getCalSalaryListForView(String sal_list_id);
+	
+	
+	
+	
 	
 }

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
   <head>
@@ -46,6 +47,7 @@
   <body>
   
   <%-- ${salaryRankDutyInfo } --%>
+  <%-- ${calSalaryListInfo } --%>
   
     <div class="wrapper">
       <!-- Sidebar -->
@@ -88,40 +90,38 @@
                   <div class="card-header">
                     <div class="card-title">급여산출내역</div>
                   </div>
-                  	<div class="card-action">
+                  	<div style="margin-left: 15px; padding-top: 10px;">
                     	<a href="/salary/calSalaryStep1"><button class="btn btn-success">신규생성</button></a>
+                    	<button class="btn btn-success" id="deleteBtn">삭제하기</button>
                   	</div>
-                  <div class="card-body">
+                  <div class="card-body" style="padding-top: 10px;">
                   	<div class="card-sub">
-                      급여산출 이후 실지급이 완료되면 상태를 최종확정으로 수정해주십시오.
+                      !! 급여산출 이후 실지급이 완료되면 상태를 최종확정으로 수정해주십시오.
                     </div>
                     <table class="table table-hover">
                       <thead>
                         <tr>
-                          <th scope="col">#</th>
-                          <th scope="col">First</th>
-                          <th scope="col">Last</th>
-                          <th scope="col">Handle</th>
+                          <th scope="col">구분</th>
+                          <th scope="col">연도</th>
+                          <th scope="col">월</th>
+                          <th scope="col">급여형태</th>
+                          <th scope="col">제목</th>
+                          <th scope="col">상태</th>
+                          <th scope="col">최종작성일</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>Mark</td>
-                          <td>Otto</td>
-                          <td>@mdo</td>
-                        </tr>
-                        <tr>
-                          <td>2</td>
-                          <td>Jacob</td>
-                          <td>Thornton</td>
-                          <td>@fat</td>
-                        </tr>
-                        <tr>
-                          <td>3</td>
-                          <td colspan="2">Larry the Bird</td>
-                          <td>@twitter</td>
-                        </tr>
+                      <c:forEach var="list" items="${calSalaryListInfo }">
+                      	<tr>
+                      		<td><input type="checkbox" data-id="sal_list_id" name="sal_list_id" value="${list.sal_list_id }"></td>
+                      		<td>${list.year }</td>
+                      		<td>${list.month }</td>
+                      		<td>${list.sal_type }</td>
+                      		<td><a href="/salary/calSalaryView?sal_list_id=${list.sal_list_id }">${list.sal_list_subject }</a></td>
+                      		<td>${list.sal_list_status }</td>
+                      		<td>${list.sal_list_date }</td>
+                      	</tr>
+                      </c:forEach>
                       </tbody>
                     </table>
                   </div>
@@ -136,7 +136,39 @@
           </div>
          </div>
             
-    
+    <script>
+        $(document).ready(function() {
+        	
+        	var checkedValues = $('input[type="checkbox"]:checked').map(function() {
+        	    return $(this).data('id'); // 각 체크박스의 값을 반환
+        	}).get();
+        	
+        	$('#deleteBtn').click(function (){
+        		$.ajax({
+        			url: '/salary/deleteSalaryList',
+        			type: 'POST',
+            		data: JSON.stringify(checkedValues),
+            		contentType: 'application/json',
+            		success: function(response) {
+            			console.log(checkedValues);
+            			swal("Success!", "정상적으로 등록하였습니다", "success");
+            		},
+            		error: function(xhr, status, error) {
+                        swal("Error!", "오류가 발생했습니다: " + error, "error"); 
+                    }
+        		});
+        		
+        	});
+        	
+        	
+        	
+        	
+        	
+        	
+        	
+        	
+        });
+    </script>
     
     <!--   Core JS Files   -->
     <script src="${pageContext.request.contextPath }/resources/assets/js/core/jquery-3.7.1.min.js?ver=1.0"></script>

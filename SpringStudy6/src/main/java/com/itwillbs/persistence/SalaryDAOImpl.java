@@ -73,6 +73,46 @@ public class SalaryDAOImpl implements SalaryDAO {
 		return sqlSession.selectList(NAMESPACE + ".getMemberInfoToName", employee_name);
 	}
 	
+	@Override
+	public void saveCalSalary(List<CalSalaryFinalVO> calSalaryData) {
+		
+		for(CalSalaryFinalVO calSalaryFinalInfo : calSalaryData) {
+			sqlSession.insert(NAMESPACE+".saveCalSalary", calSalaryFinalInfo);
+		}
+	}
+	
+	@Override
+	public void saveCalSalaryList(calSalaryListVO vo) {
+		
+		//salary_list_id 설정
+		String sal_list_id = "s"+vo.getYear()+vo.getMonth()+vo.getSal_type();
+		//salary_list_subject 설정
+		String sal_list_subject = vo.getYear()+"년 "+vo.getMonth()+"월 "+vo.getSal_type()+"내역";
+		
+		vo.setSal_list_id(sal_list_id);
+		vo.setSal_list_subject(sal_list_subject);
+		
+		// 산출내역 급여내역리스트에 저장
+		sqlSession.insert(NAMESPACE+".saveCalSalaryList", vo);
+	}
+	
+	@Override
+	public List<calSalaryListVO> getCalSalaryList() {
+		return sqlSession.selectList(NAMESPACE+".getCalSalaryList");
+	}
+	
+	// 급여내역리스트에서 특정 제목 조회 시 급여상세내역 불러오기
+	@Override
+	public List<CalSalaryFinalVO> getCalSalaryFinalList(String sal_list_id) {
+		return sqlSession.selectList(NAMESPACE+".getCalSalaryFinalListForView", sal_list_id);
+	}
+	
+	// 급여내역테이블 조회시 급여정보(형태/연/월) 가져오기
+	@Override
+	public calSalaryListVO getCalSalaryListForView(String sal_list_id) {
+		return sqlSession.selectOne(NAMESPACE+".getCalSalaryListForView", sal_list_id);
+	}
+	
 	
 	@Override
 	public List<CalSalaryFinalVO> calSalary(List<String> employeeIds, calSalaryListVO vo) {
@@ -183,10 +223,7 @@ public class SalaryDAOImpl implements SalaryDAO {
 					calSalaryFinalList.add(calSalaryFinalInfo);
 					break;
 				}//switch 근무유형
-				
 			}//for
-			
-			System.out.println("DAO :" + calSalaryFinalList);
 			return calSalaryFinalList;
 		}//switch 급여형태
 		return null;

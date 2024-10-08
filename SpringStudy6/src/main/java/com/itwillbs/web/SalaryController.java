@@ -1,6 +1,7 @@
 package com.itwillbs.web;
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,13 +33,6 @@ public class SalaryController {
 	
 	
 	private static final Logger logger = LoggerFactory.getLogger(SalaryController.class);
-	
-	// http://localhost:8088/salary/salaryCal
-	@GetMapping(value = "/main")
-	public String salaryCal() {
-		
-		return "/salary/main";
-	}
 	
 	// 급여기본정보 설정 페이지
 	// http://localhost:8088/salary/salaryBasicInfo
@@ -75,6 +69,7 @@ public class SalaryController {
 	// http://localhost:8088/salary/salaryRankDutyInfo
 	@GetMapping(value = "/salaryRankDutyInfo")
 	public String salaryRankDutyInfoGet(Model model) {
+		logger.debug("salaryRankDutyInfoGet(Model model) 실행");
 		SalaryRankDutyVO result = sService.getSalaryRankDutyInfo();
 		
 		if(result == null) {
@@ -104,8 +99,11 @@ public class SalaryController {
 	// http://localhost:8088/salary/calSalary
 	@GetMapping(value = "/calSalary")
 	public String calSalary(Model model){
-		logger.debug("calSalary(Model model) 호출");
+		logger.debug("calSalary(Model model) 실행");
 		
+		// 급여산출내역 가져오기
+		List<calSalaryListVO> calSalaryList = sService.getCalSalaryList();
+		model.addAttribute("calSalaryListInfo", calSalaryList);
 	
 		return "/salary/calSalary";
 	}
@@ -114,7 +112,7 @@ public class SalaryController {
 	// http://localhost:8088/salary/calSalaryStep1
 	@GetMapping(value = "/calSalaryStep1")
 	public String calSalaryStep1(){
-		logger.debug("calSalaryStep1() 호출");
+		logger.debug("calSalaryStep1() 실행");
 		return "/salary/calSalaryStep1";
 	}
 	
@@ -184,6 +182,68 @@ public class SalaryController {
 		
 		return "/salary/calSalaryStep3";
 	}
+	
+	// 모달테이블에서 조회된 사원정보 본 테이블로 이동하기
+	// http://localhost:8088/salary/transModalToTable
+	@PostMapping(value = "/transModalToTable")
+	@ResponseBody
+	public List<MemberInfoForSalaryVO> transModalToTable(@RequestBody String employee_id){
+		logger.debug(employee_id);
+		return sService.getMemberInfoForSalary(employee_id);
+	}
+	
+	// 최종 급여산출내용을 테이블로 저장하기
+	@PostMapping(value = "/saveSalaryInfo")
+	@ResponseBody
+	public String saveSalaryInfo(@RequestBody Map<String, Object> data){
+		
+		// 전달된 정보 저장 idList, (급여유형, 연도, 월) => 객체 저장
+		List<String> employeeIds = (List<String>) data.get("employeeIds");
+		calSalaryListVO vo = new calSalaryListVO();
+		vo.setSal_type((String)data.get("sal_type"));
+		vo.setYear((String)data.get("year"));
+		vo.setMonth((String)data.get("month"));
+		
+		//급여산출
+		List<CalSalaryFinalVO> CalSalaryFinalInfo = sService.calSalary(employeeIds, vo);
+		logger.debug(CalSalaryFinalInfo.toString());
+		
+		//산출된 급여 급여상세내역 테이블 저장
+		sService.saveCalSalary(CalSalaryFinalInfo);
+		
+		// 급여내역테이블 저장
+		sService.saveCalSalaryList(vo);
+		
+		return "ok";
+	}
+	
+	// 급여내역페이지에서 조회시 급여조회 페이지 이동
+	// http://localhost:8088/salary/calSalaryView
+	@GetMapping(value = "/calSalaryView")
+	public String calSalaryView(@RequestParam("sal_list_id") String sal_list_id, Model model){
+		logger.debug("calSalaryView(@RequestParam(\"sal_list_id\") String sal_list_id, Model model) 실행");
+		logger.debug(sal_list_id);
+		
+		// 급여상세내역 가져오기
+		List<CalSalaryFinalVO> calSalaryFinalInfo = sService.getCalSalaryFinalList(sal_list_id);
+		model.addAttribute("calSalaryFinalInfo", calSalaryFinalInfo);
+		
+		// 기본내용가져오기(급여형태/연/월)
+		calSalaryListVO calSalaryListInfo = sService.getCalSalaryListForView(sal_list_id);
+		model.addAttribute("calSalaryListInfo", calSalaryListInfo);
+		
+		return "/salary/calSalaryView";
+	}
+	
+	// 급여내역리스트에서 삭제하기
+	@PostMapping(value = "/deleteSalaryList")
+	@ResponseBody
+	public String deleteSalaryList(@RequestBody List<String> checkedValues){
+		logger.debug(checkedValues.toString());
+		return "ok";
+	}
+	
+	
 	
 	
 }
