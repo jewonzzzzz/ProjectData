@@ -84,7 +84,7 @@
                       </a>
                     </li>
                     <li>
-                      <a href="components/panels.html">
+                      <a href="/salary/calSalaryInquiryForManage">
                         <span class="sub-item">급여조회(관리자)</span>
                       </a>
                     </li>

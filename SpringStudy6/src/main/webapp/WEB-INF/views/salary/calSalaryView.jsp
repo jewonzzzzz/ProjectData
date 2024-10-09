@@ -165,9 +165,9 @@
               
               <div class="col-md-10">
               	<div style="margin-bottom: 10px; display: flex; justify-content: flex-end;;">
-              	<button type="button" id="saveBtn" class="btn btn-primary">
-                            저장하기
-                 </button>
+              		<a href="/salary/calSalary"><button type="button" class="btn btn-primary">
+                            목록으로
+                 	</button></a>
               	</div>
                 <div class="card">
                   <div class="card-header">

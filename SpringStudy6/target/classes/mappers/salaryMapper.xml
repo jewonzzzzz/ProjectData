@@ -55,6 +55,11 @@
 		where salary_rankduty_id=1
 	</select>
 	
+	<!-- 급여생성 중복방지 체크 -->
+	<select id="checkCreateSalary" resultType="CalSalaryListVO">
+		select * from sal_list where sal_type = #{sal_type} and year= #{year} and month=#{month} 
+		limit 1  
+	</select>
 	
 	<!-- 사번으로 직원정보 가져오기 -->
 	<select id="getMemberInfoForSalary" resultType="MemberInfoForSalaryVO">
@@ -103,7 +108,7 @@
 		now(), '임시저장')
 	</select>	
 	
-	<select id="getCalSalaryList" resultType="calSalaryListVO">
+	<select id="getCalSalaryList" resultType="CalSalaryListVO">
 		select * from sal_list order by sal_list_id desc 
 	</select>	
 	
@@ -113,9 +118,56 @@
 	</select>	
 	
 	<!-- 급여내역리스트에서 조회시 급여정보(형태/연/월) 조회 -->
-	<select id="getCalSalaryListForView" resultType="calSalaryListVO">
+	<select id="getCalSalaryListForView" resultType="CalSalaryListVO">
 		select year, month, sal_type from sal_list where sal_list_id = #{sal_list_id} 
 	</select>	
+	
+	<!-- 급여내역리스트에서 삭제시 급여내역리스트 테이블 삭제 -->
+	<select id="deleteCalSalaryList">
+		delete from sal_list where sal_list_id = #{sal_list_id} 
+	</select>	
+	
+	<!-- 급여내역리스트에서 삭제시 급여상세내역 테이블 삭제 -->
+	<select id="deleteCalSalaryFinal">
+		delete from salary_final where sal_list_id = #{sal_list_id} 
+	</select>	
+	
+	<!-- 급여내역리스트에서 최종확정으로 변경 -->
+	<select id="confirmSalaryList">
+		update sal_list set sal_list_status = '최종확정' where sal_list_id = #{sal_list_id} 
+	</select>	
+	
+	<!-- 급여조회(사번)하기 급여정보(연/월/사번or이름) 급여상세정보로 리턴-->
+	<select id="getCalSalaryInquiryForManageToId" resultType="CalSalaryFinalVO">
+		select f.employee_id, sal_final_id, f.sal_list_id, sal_type, year, month, sal_total_basic, sal_total_deduct, sal_total 
+		from salary_final f, sal_list l 
+		where f.sal_list_id = l.sal_list_id 
+		and year=#{year} and employee_id=#{employee_id} 
+		order by employee_id desc, year desc, CAST(month AS UNSIGNED) DESC 
+	</select>	
+	
+	<select id="getCalSalaryInquiryForManageToName" resultType="CalSalaryFinalVO">
+		select f.employee_id, sal_final_id, f.sal_list_id, sal_type, year, month, sal_total_basic, sal_total_deduct, sal_total 
+		from salary_final f, sal_list l 
+		where f.sal_list_id = l.sal_list_id 
+		and year=#{year} and employee_name=#{employee_name} 
+		order by employee_id desc, year desc, CAST(month AS UNSIGNED) DESC 
+	</select>	
+	
+	<select id="salaryDetail" resultType="CalSalaryFinalVO">
+		select employee_id, employee_name, employee_grade, employee_duty, workType, year, month, sal_grade, sal_duty, 
+		sal_allow, incometax, pension, heal_ins, long_ins, emp_ins, sal_total_basic, sal_total_deduct, sal_total 
+		from salary_final f, sal_list l
+		where f.sal_list_id = l.sal_list_id and sal_final_id=#{sal_final_id} 
+	</select>	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 		
 </mapper>

@@ -21,7 +21,7 @@ import com.itwillbs.domain.CalSalaryFinalVO;
 import com.itwillbs.domain.MemberInfoForSalaryVO;
 import com.itwillbs.domain.SalaryBasicInfoVO;
 import com.itwillbs.domain.SalaryRankDutyVO;
-import com.itwillbs.domain.calSalaryListVO;
+import com.itwillbs.domain.CalSalaryListVO;
 import com.itwillbs.service.SalaryService;
 
 @Controller
@@ -102,13 +102,13 @@ public class SalaryController {
 		logger.debug("calSalary(Model model) 실행");
 		
 		// 급여산출내역 가져오기
-		List<calSalaryListVO> calSalaryList = sService.getCalSalaryList();
+		List<CalSalaryListVO> calSalaryList = sService.getCalSalaryList();
 		model.addAttribute("calSalaryListInfo", calSalaryList);
 	
 		return "/salary/calSalary";
 	}
 	
-	// 급여산출 페이지
+	// 급여산출 페이지 Step1
 	// http://localhost:8088/salary/calSalaryStep1
 	@GetMapping(value = "/calSalaryStep1")
 	public String calSalaryStep1(){
@@ -116,10 +116,28 @@ public class SalaryController {
 		return "/salary/calSalaryStep1";
 	}
 	
+	// 급여 중복 작성여부 체크
+	// http://localhost:8088/salary/checkCreateSalary
+	@PostMapping(value = "/checkCreateSalary")
+	@ResponseBody
+	public String checkCreateSalary(@RequestBody List<String> checkSalaryInfo){
+		logger.debug("checkCreateSalary() 실행");
+		logger.debug(checkSalaryInfo.toString());
+		CalSalaryListVO vo = new CalSalaryListVO();
+		vo.setSal_type(checkSalaryInfo.get(0));
+		vo.setYear(checkSalaryInfo.get(1));
+		vo.setMonth(checkSalaryInfo.get(2));
+		CalSalaryListVO cvo = sService.checkCreateSalary(vo);
+		if(cvo == null) { //입력정보 없으면 ok
+			return "ok";
+		}
+		return null; //입력정보 있으면 null
+	}
+	
 	// 급여산출 페이지 Step2
 	// http://localhost:8088/salary/calSalaryStep2
 	@PostMapping(value = "/calSalaryStep2")
-	public String calSalaryStep2(calSalaryListVO vo, Model model){
+	public String calSalaryStep2(CalSalaryListVO vo, Model model){
 		logger.debug("calSalaryStep2() 호출");
 		logger.debug(vo.toString());
 		
@@ -143,7 +161,8 @@ public class SalaryController {
 	@PostMapping(value = "/getMemberInfoForModal")
 	@ResponseBody
 	public List<MemberInfoForSalaryVO> getMemberInfoForModal(@RequestBody String employeeInfo){
-	logger.debug("employeeInfo:" + employeeInfo);
+		logger.debug("getMemberInfoForModal(@RequestBody String employeeInfo) 실행");
+		logger.debug("employeeInfo:" + employeeInfo);
 	
 	//사번으로 먼저 select
 	List<MemberInfoForSalaryVO> memberInfoList = sService.getMemberInfoToId(employeeInfo);
@@ -168,7 +187,7 @@ public class SalaryController {
 	// 급여산출 페이지 Step3
 	// http://localhost:8088/salary/calSalaryStep3
 	@PostMapping(value = "/calSalaryStep3")
-	public String calSalaryStep3(@RequestParam("employeeIds") List<String> employeeIds, calSalaryListVO vo, Model model){
+	public String calSalaryStep3(@RequestParam("employeeIds") List<String> employeeIds, CalSalaryListVO vo, Model model){
 		logger.debug("calSalaryStep3() 호출");
 		logger.debug(employeeIds.toString());
 		logger.debug(vo.toString());
@@ -199,7 +218,7 @@ public class SalaryController {
 		
 		// 전달된 정보 저장 idList, (급여유형, 연도, 월) => 객체 저장
 		List<String> employeeIds = (List<String>) data.get("employeeIds");
-		calSalaryListVO vo = new calSalaryListVO();
+		CalSalaryListVO vo = new CalSalaryListVO();
 		vo.setSal_type((String)data.get("sal_type"));
 		vo.setYear((String)data.get("year"));
 		vo.setMonth((String)data.get("month"));
@@ -208,11 +227,11 @@ public class SalaryController {
 		List<CalSalaryFinalVO> CalSalaryFinalInfo = sService.calSalary(employeeIds, vo);
 		logger.debug(CalSalaryFinalInfo.toString());
 		
-		//산출된 급여 급여상세내역 테이블 저장
-		sService.saveCalSalary(CalSalaryFinalInfo);
-		
 		// 급여내역테이블 저장
 		sService.saveCalSalaryList(vo);
+		
+		//산출된 급여 급여상세내역 테이블 저장
+		sService.saveCalSalary(CalSalaryFinalInfo);
 		
 		return "ok";
 	}
@@ -229,19 +248,77 @@ public class SalaryController {
 		model.addAttribute("calSalaryFinalInfo", calSalaryFinalInfo);
 		
 		// 기본내용가져오기(급여형태/연/월)
-		calSalaryListVO calSalaryListInfo = sService.getCalSalaryListForView(sal_list_id);
+		CalSalaryListVO calSalaryListInfo = sService.getCalSalaryListForView(sal_list_id);
 		model.addAttribute("calSalaryListInfo", calSalaryListInfo);
 		
 		return "/salary/calSalaryView";
 	}
 	
 	// 급여내역리스트에서 삭제하기
-	@PostMapping(value = "/deleteSalaryList")
-	@ResponseBody
-	public String deleteSalaryList(@RequestBody List<String> checkedValues){
-		logger.debug(checkedValues.toString());
-		return "ok";
+	@PostMapping(value = "/deleteSalaryInfo")
+	public String deleteSalaryInfo(@RequestParam("sal_list_id") String sal_list_id){
+		logger.debug("deleteSalaryList(@RequestParam(\"sal_list_id\") String sal_list_id) 실행");
+		// 급여내역리스트 및 급여상세테이블 삭제하기
+		sService.deleteSalaryInfo(sal_list_id);
+		
+		return "redirect:/salary/calSalary";
 	}
+	
+	// 급여내역리스트에서 최종확정 하기
+	@PostMapping(value = "/confirmSalaryList")
+	public String confirmSalaryList(@RequestParam("sal_list_id") String sal_list_id){
+		logger.debug("confirmSalaryList(@RequestParam(\"sal_list_id\") String sal_list_id) 실행");
+		logger.debug(sal_list_id);
+		// 급여내역리스트 상태 최종확정으로 변경
+		sService.confirmSalaryList(sal_list_id);
+		
+		return "redirect:/salary/calSalary";
+	}
+	
+	
+	// 급여조회(관리자) 페이지
+	@GetMapping(value = "calSalaryInquiryForManage")
+	public String calSalaryInquiryForManage() {
+		return "/salary/calSalaryInquiryForManage";
+	}
+	
+	// 급여조회(관리자)
+	@PostMapping(value = "getCalSalaryInquiryForManage")
+	@ResponseBody
+	public List<CalSalaryFinalVO> getCalSalaryInquiryForManage(@RequestBody List<String> checkSalaryInfo) {
+		logger.debug(checkSalaryInfo.toString());
+		
+		CalSalaryListVO vo = new CalSalaryListVO();
+		vo.setYear(checkSalaryInfo.get(0));
+		vo.setEmployee_id(checkSalaryInfo.get(1));
+		vo.setEmployee_name(checkSalaryInfo.get(1));
+		
+		//사번으로 먼저 select
+		List<CalSalaryFinalVO> calSalaryInquiryList = sService.getCalSalaryInquiryForManageToId(vo) ;
+		
+		//사번으로 검색 없으면
+		if(calSalaryInquiryList.size() == 0) {
+			calSalaryInquiryList = sService.getCalSalaryInquiryForManageToName(vo);
+		}
+		logger.debug(calSalaryInquiryList.toString());
+		
+			return calSalaryInquiryList;
+	}
+	
+	// 급여조회 상세페이지
+	@GetMapping(value = "salaryDetail")
+	public String salaryDetail(@RequestParam("sal_final_id") int sal_final_id, Model model) {
+		logger.debug(""+sal_final_id);
+		
+		// 해당 급여번호 급여정보 가져가기
+		CalSalaryFinalVO calSalaryFinalInfo = sService.salaryDetail(sal_final_id);
+		model.addAttribute("calSalaryFinalInfo", calSalaryFinalInfo);
+		
+		return "/salary/salaryDetail";
+	}
+	
+	
+	
 	
 	
 	

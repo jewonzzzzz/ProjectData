@@ -81,7 +81,7 @@
               </ul>
             </div>
             
-            <form action="/salary/calSalaryStep2" method="post">
+            <form id="submitForm" action="/salary/calSalaryStep2" method="post">
             <div class="row">
             <div class="col-sm-6 col-md-4">
                 <div class="card card-stats card-round">
@@ -108,14 +108,6 @@
               <div class="col-sm-6 col-md-3">
                 <div class="card card-stats card-round">
                   <div class="card-body" id="second_card">
-                  <script>
-                  /* $(document).ready(function() {
-                	 $('#second_card').css('background', 'grey'); 
-                	  
-                  }); */
-                  
-                  </script>
-                  
                     <div class="row align-items-center">
                       <div class="col-icon">
                         <div
@@ -218,7 +210,7 @@
                       <div class="form-group from-show-notify row">
                         <div class="col-lg-3 col-md-3 col-sm-12"></div>
                         <div class="col-lg-4 col-md-9 col-sm-12">
-                          <button id="displayNotif" class="btn btn-primary">
+                          <button id="nextBtn" class="btn btn-primary">
                             다음으로
                           </button>
                         </div>
@@ -241,6 +233,7 @@
     
     <script>
         $(document).ready(function() {
+        	
             // 현재 연도 구하기
             const currentYear = new Date().getFullYear();
             
@@ -252,6 +245,34 @@
             for (let month = 1; month <= 12; month++) {
                 $('#monthSelect').append(new Option(month, month));  // Option 생성 및 추가
             }
+            
+         // 다음으로 버튼 시 사번가지고 이동하기
+            $('#nextBtn').click(function(event){
+            	event.preventDefault();
+            	
+            	var checkSalaryInfo = [];
+            	$('option:checked').each(function () {
+            		checkSalaryInfo.push($(this).val());
+                });
+            	
+            	$.ajax({
+            		url:'/salary/checkCreateSalary',
+            		type: 'POST',
+            		data: JSON.stringify(checkSalaryInfo),
+            		contentType: 'application/json',
+            		success: function(response) {
+            			// 중복여부 체크
+            			if(response === 'ok'){
+            				$('#submitForm').submit();
+            			} else{
+                        	swal("Error!", "중복된 입력정보가 있습니다." , "error");
+            			}
+            		},
+            		error: function(xhr, status, error) {
+                        swal("Error!", "실패", "error");
+                    }
+            	});
+            });
             
             
             

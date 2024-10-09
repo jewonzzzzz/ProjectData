@@ -165,10 +165,16 @@
               
               
               <div class="col-md-10">
-              	<div style="margin-bottom: 10px; display: flex; justify-content: flex-end;;">
-              	<button type="button" id="saveBtn" class="btn btn-primary">
-                            저장하기
-                 </button>
+              	<div style="margin-bottom: 10px; display: flex; justify-content: space-between;">
+             	 	<button type="button" class="btn btn-primary" onclick="history.back()">이전으로</button>
+             	 	<div>
+              		<button type="button" id="saveBtn" class="btn btn-primary" style="margin-right:5px;">
+                        저장하기
+                 	</button>
+              		<button type="button" class="btn btn-primary" onclick="location.href='/salary/calSalary';">
+				    	목록으로
+					</button>
+					</div>
               	</div>
                 <div class="card">
                   <div class="card-header">
@@ -223,14 +229,14 @@
                             <th>직급급</th>
                             <th>직무급</th>
                             <th>법정수당</th>
-                            <th>기본급(세전급여액)</th>
+                            <th>(세전)급여액</th>
                             <th>소득세</th>
                             <th>국민연금</th>
                             <th>건강보험료</th>
                             <th>장기요양보험료</th>
                             <th>고용보험료</th>
                             <th>공제금 합계</th>
-                            <th>실지급액(세후급여액)</th>
+                            <th>(세후)실지급액</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -296,7 +302,14 @@
             		data: JSON.stringify(dataToSend),
             		contentType: 'application/json',
             		success: function(response) {
-            			swal("Warning!", "성공", "warning");
+            			swal({
+                            title: "Success!",
+                            text: "저장이 완료되었습니다. 목록으로 이동합니다.",
+                            icon: "success",
+                            button: "OK"
+                        }).then(function() {
+                            window.location.href = "/salary/calSalary";  // 페이지 이동
+                        });
             		},
             		error: function(xhr, status, error) {
                         swal("Error!", "실패", "error");
@@ -306,10 +319,7 @@
         	});
         	
         	
-        	
-        	
-        	
-        	
+        	// 전체 테이블 가운대 정렬
         	$('table').wrap('<div style="text-align: center;"></div>');
         	
         	// 화면로드 시 기본급,공제금,실지급액 합 계산 및 출력

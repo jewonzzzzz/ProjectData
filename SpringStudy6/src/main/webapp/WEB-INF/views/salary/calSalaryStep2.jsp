@@ -401,14 +401,14 @@
             	$('#modalNextContent').hide();    
          	});
          	
+         	// 사번/이름 검색해서 직원정보 가져오기
             $("#selectBtn").click(function () {
             	$.ajax({
             		url:'/salary/getMemberInfoForModal',
             		type: 'POST',
+            		data: $('input[name="employeeInfo"]').val(),
             		contentType: 'application/json',
             		success: function(response) {
-                        // 성공적으로 데이터를 받아온 경우.
-            			// swal("Success!", "ajax성공" + response, "success");
                         $('#modalTable tbody').empty();
                         response.forEach(function(data){
                         	var row = "<tr>" +
@@ -424,7 +424,6 @@
                         $('#modalContent').hide();
                     },
                     error: function(xhr, status, error) {
-                        // 오류가 발생한 경우
                         $('#modalContent').show();
                         swal("Error!", "사번 또는 이름을 입력해주세요", "error");
                     }
@@ -471,10 +470,6 @@
                     }
             	});
             });
-            
-            // 이미 등록된 사원 중복등록 막기
-            
-            
             
         });
     </script>

@@ -12,7 +12,7 @@ import com.itwillbs.domain.CalSalaryFinalVO;
 import com.itwillbs.domain.MemberInfoForSalaryVO;
 import com.itwillbs.domain.SalaryBasicInfoVO;
 import com.itwillbs.domain.SalaryRankDutyVO;
-import com.itwillbs.domain.calSalaryListVO;
+import com.itwillbs.domain.CalSalaryListVO;
 
 @Repository
 public class SalaryDAOImpl implements SalaryDAO {
@@ -52,6 +52,12 @@ public class SalaryDAOImpl implements SalaryDAO {
 	public void updatesalaryRankDutyInfo(SalaryRankDutyVO vo) {
 		sqlSession.update(NAMESPACE + ".updateSalaryRankDutyInfo", vo);
 	}
+	
+	// 급여형태/연/월 중복작성 막기 위한 급여리스트 존재 조회
+	@Override
+	public CalSalaryListVO checkCreateSalary(CalSalaryListVO vo) {
+		return sqlSession.selectOne(NAMESPACE+".checkCreateSalary", vo);
+	}
 
 	@Override
 	public List<MemberInfoForSalaryVO> getMemberInfoForSalary(String employee_id) {
@@ -81,9 +87,15 @@ public class SalaryDAOImpl implements SalaryDAO {
 		}
 	}
 	
+	// 급여내역테이블 삭제시 급여내역테이블 및 급여상세테이블 삭제
 	@Override
-	public void saveCalSalaryList(calSalaryListVO vo) {
-		
+	public void deleteSalaryInfo(String sal_list_id) {
+		sqlSession.delete(NAMESPACE+".deleteCalSalaryList", sal_list_id);
+		sqlSession.delete(NAMESPACE+".deleteCalSalaryFinal", sal_list_id);
+	}
+	
+	@Override
+	public void saveCalSalaryList(CalSalaryListVO vo) {
 		//salary_list_id 설정
 		String sal_list_id = "s"+vo.getYear()+vo.getMonth()+vo.getSal_type();
 		//salary_list_subject 설정
@@ -97,7 +109,7 @@ public class SalaryDAOImpl implements SalaryDAO {
 	}
 	
 	@Override
-	public List<calSalaryListVO> getCalSalaryList() {
+	public List<CalSalaryListVO> getCalSalaryList() {
 		return sqlSession.selectList(NAMESPACE+".getCalSalaryList");
 	}
 	
@@ -109,13 +121,49 @@ public class SalaryDAOImpl implements SalaryDAO {
 	
 	// 급여내역테이블 조회시 급여정보(형태/연/월) 가져오기
 	@Override
-	public calSalaryListVO getCalSalaryListForView(String sal_list_id) {
+	public CalSalaryListVO getCalSalaryListForView(String sal_list_id) {
 		return sqlSession.selectOne(NAMESPACE+".getCalSalaryListForView", sal_list_id);
 	}
 	
+	// 급여내역리스트 상태 최종확정으로 변경
+	@Override
+	public void confirmSalaryList(String sal_list_id) {
+		sqlSession.update(NAMESPACE+".confirmSalaryList", sal_list_id);
+	}
+	
+	// 급여조회하기 급여정보(연/월/사번)
+	@Override
+	public List<CalSalaryFinalVO> getCalSalaryInquiryForManageToId(CalSalaryListVO vo) {
+		return sqlSession.selectList(NAMESPACE+".getCalSalaryInquiryForManageToId", vo);
+	}
+	
+	// 급여조회(이름)하기 급여정보(연/월/이름)
+	@Override
+	public List<CalSalaryFinalVO> getCalSalaryInquiryForManageToName(CalSalaryListVO vo) {
+		return sqlSession.selectList(NAMESPACE+".getCalSalaryInquiryForManageToName", vo);
+	}
+	
+	// 급여번호로 급여정보 가져오기
+	@Override
+	public CalSalaryFinalVO salaryDetail(int sal_final_id) {
+		return sqlSession.selectOne(NAMESPACE+".salaryDetail", sal_final_id);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	@Override
-	public List<CalSalaryFinalVO> calSalary(List<String> employeeIds, calSalaryListVO vo) {
+	public List<CalSalaryFinalVO> calSalary(List<String> employeeIds, CalSalaryListVO vo) {
 
 		// 급여 기본정보 가져오기
 		SalaryBasicInfoVO basciInfo = sqlSession.selectOne(NAMESPACE + ".getSalaryBasicInfo");

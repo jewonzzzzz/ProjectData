@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class CalSalaryFinalVO {
 
+	private int sal_final_id;
 	private String sal_list_id;
 	private String employee_id;
 	private String employee_name;
@@ -12,6 +13,9 @@ public class CalSalaryFinalVO {
 	private String employee_grade;
 	private String employee_duty;
 	private String workType;
+	private String year;
+	private String month;
+	private String sal_type;
 	private int sal_grade;
 	private int sal_duty;
 	private int sal_allow;

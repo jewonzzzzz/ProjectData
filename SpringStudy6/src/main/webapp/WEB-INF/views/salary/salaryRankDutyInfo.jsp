@@ -369,10 +369,9 @@
             	        className: "btn btn-success",
             	      },
             	    },
-            	  }).then(function() {  // function 표현식 사용
-            	    // swal 확인 후 폼 전송
-            	    $(this).closest("form").submit();  // 현재 버튼이 속한 form을 찾고 submit
-            	  }.bind(this));  // `this`가 버튼을 가리키도록 바인딩
+            	  }).then(function() {  
+            	    $(this).closest("form").submit(); 
+            	  }.bind(this)); 
             	});
         });
         

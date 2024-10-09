@@ -91,14 +91,22 @@
                     <div class="card-title">급여산출내역</div>
                   </div>
                   	<div style="margin-left: 15px; padding-top: 10px;">
-                    	<a href="/salary/calSalaryStep1"><button class="btn btn-success">신규생성</button></a>
-                    	<button class="btn btn-success" id="deleteBtn">삭제하기</button>
+                    	<a href="/salary/calSalaryStep1"><button class="btn btn-primary">신규생성</button></a>
+                    	
+                    	<form id="deleteSubmit" action="/salary/deleteSalaryInfo" method="post" style="display: inline-block;">
+                    		<input type="hidden" id="inputForDelete" name="sal_list_id">
+                    		<button type="submit" class="btn btn-primary" id="deleteBtn">삭제하기</button>
+                    	</form>
+                    	
+                    	<form id="confirmSubmit" action="/salary/confirmSalaryList" method="post" style="display: inline-block;">
+                    		<input type="hidden" id="inputForConfirm" name="sal_list_id">
+                    		<button type="submit" class="btn btn-primary" id="confirmBtn">최종확정</button>
+                    	</form>
+                    	
                   	</div>
                   <div class="card-body" style="padding-top: 10px;">
-                  	<div class="card-sub">
-                      !! 급여산출 이후 실지급이 완료되면 상태를 최종확정으로 수정해주십시오.
-                    </div>
-                    <table class="table table-hover">
+                    <table id="basic-datatables"
+                        class="display table table-striped table-hover">
                       <thead>
                         <tr>
                           <th scope="col">구분</th>
@@ -139,26 +147,61 @@
     <script>
         $(document).ready(function() {
         	
-        	var checkedValues = $('input[type="checkbox"]:checked').map(function() {
-        	    return $(this).data('id'); // 각 체크박스의 값을 반환
-        	}).get();
-        	
-        	$('#deleteBtn').click(function (){
-        		$.ajax({
-        			url: '/salary/deleteSalaryList',
-        			type: 'POST',
-            		data: JSON.stringify(checkedValues),
-            		contentType: 'application/json',
-            		success: function(response) {
-            			console.log(checkedValues);
-            			swal("Success!", "정상적으로 등록하였습니다", "success");
-            		},
-            		error: function(xhr, status, error) {
-                        swal("Error!", "오류가 발생했습니다: " + error, "error"); 
-                    }
-        		});
-        		
+        	$("#basic-datatables").DataTable({
+        		pageLength: 6,
         	});
+        	
+        	// 테이블 가운대 정렬
+        	$('table').wrap('<div style="text-align: center;"></div>');
+        	
+        	// 삭제버튼 시 리스트id 가지고 이동하기
+            $('#deleteBtn').click(function(event){
+            	event.preventDefault();
+            	swal({
+     	              title: "삭제하시겠습니까?",
+     	              text: "삭제 후에는 신규작성을 통해 다시 작성하셔야 됩니다.",
+     	              type: "warning",
+     	              buttons: {
+     	                cancel: {
+     	                  visible: true,
+     	                  text: "취소하기",
+     	                  className: "btn btn-danger",
+     	                },
+     	                confirm: {
+     	                  text: "삭제하기",
+     	                  className: "btn btn-success",
+     	                },
+     	              },
+     	            }).then(function(willDelete) {  // 일반 함수 문법으로 변경
+     	             if (willDelete) {
+     	            	$('#inputForDelete').val($('input[name="sal_list_id"]:checked').val());
+     	            	swal({
+     	            	    title: "Success!",
+     	            	    text: "삭제완료",
+     	            	    icon: "success",
+     	            	    buttons: "OK", 
+     	            	}).then(function() {
+     	            		$('#deleteSubmit').submit();
+                        });
+   	             	}
+                    });
+     	     	 });
+        	
+         // 최종확정버튼 시 리스트id 가지고 이동하기
+        	$('#confirmBtn').click(function(event){
+        		event.preventDefault();
+        		$('#inputForConfirm').val($('input[name="sal_list_id"]:checked').val());
+        		swal({
+	            	    title: "Success!",
+	            	    text: "최종확정되었습니다.",
+	            	    icon: "success",
+	            	    buttons: "OK", 
+            	}).then(function() {
+            		$('#confirmSubmit').submit();
+                });
+        	});
+        	
+        	
         	
         	
         	
